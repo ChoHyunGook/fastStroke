@@ -44,6 +44,104 @@ export default function SMS_service(){
     let authNum = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
 
     return {
+        findInfoSMS(req,res){
+            const data =req.body
+            console.log(data.name)
+            if(data.name !== undefined){
+                User.findOne({name:data.name,phone:data.phone})
+                    .then(user=>{
+                        if(!user){
+                            res.status(400).send('가입된 정보가 없습니다.')
+                        }else{
+                            const user_phone = req.body.phone
+                            const phoneNumber = user_phone.split("-").join("");
+                            const phoneSubject = req.body.phoneSubject
+
+                            const authNumToken = jwt.sign({
+                                authNum: authNum,
+                                name:data.name,
+                                phone: req.body.phone,
+                            }, authNum_jwt_secret, {expiresIn: '3m'})
+
+
+                            res.cookie("authNumToken", authNumToken, {
+                                secure: false,
+                                httpOnly: true
+                            })
+
+                            axios({
+                                method: method,
+                                json: true,
+                                url: url,
+                                headers: {
+                                    "Contenc-type": "application/json; charset=utf-8",
+                                    "x-ncp-iam-access-key": accessKey,
+                                    "x-ncp-apigw-timestamp": date
+                                    ,
+                                    "x-ncp-apigw-signature-v2": signature,
+                                },
+                                data: {
+                                    type: "SMS",
+                                    countryCode: "82",
+                                    from: smsPhone,
+                                    content: `[FastStroke]\n[${phoneSubject} 서비스]\n인증번호는 [${authNum}] 입니다.`,
+                                    messages: [{to: `${phoneNumber}`}],
+                                },
+                            });
+                            console.log(authNum)
+                            return res.status(200).send('인증번호가 전송되었습니다. 인증번호 유효시간은 3분입니다.')
+                        }
+                    })
+            }else{
+                User.findOne({userId:data.userId,phone:data.phone})
+                    .then(user=>{
+                        if(!user){
+                            res.status(400).send('가입된 정보가 없습니다.')
+                        }else{
+                            const user_phone = req.body.phone
+                            const phoneNumber = user_phone.split("-").join("");
+                            const phoneSubject = req.body.phoneSubject
+
+                            const authNumToken = jwt.sign({
+                                authNum: authNum,
+                                userId:data.userId,
+                                phone: req.body.phone,
+                            }, authNum_jwt_secret, {expiresIn: '3m'})
+
+
+                            res.cookie("authNumToken", authNumToken, {
+                                secure: false,
+                                httpOnly: true
+                            })
+
+                            axios({
+                                method: method,
+                                json: true,
+                                url: url,
+                                headers: {
+                                    "Contenc-type": "application/json; charset=utf-8",
+                                    "x-ncp-iam-access-key": accessKey,
+                                    "x-ncp-apigw-timestamp": date
+                                    ,
+                                    "x-ncp-apigw-signature-v2": signature,
+                                },
+                                data: {
+                                    type: "SMS",
+                                    countryCode: "82",
+                                    from: smsPhone,
+                                    content: `[FastStroke]\n[${phoneSubject} 서비스]\n인증번호는 [${authNum}] 입니다.`,
+                                    messages: [{to: `${phoneNumber}`}],
+                                },
+                            });
+                            console.log(authNum)
+                            return res.status(200).send('인증번호가 전송되었습니다. 인증번호 유효시간은 3분입니다.')
+                        }
+                    })
+            }
+
+        },
+
+
         RegisterSMS(req,res) {
             const data = req.body
 
@@ -59,7 +157,6 @@ export default function SMS_service(){
                     const authNumToken = jwt.sign({
                         authNum: authNum,
                         phone: req.body.phone,
-
                     }, authNum_jwt_secret, {expiresIn: '3m'})
 
 
@@ -87,6 +184,7 @@ export default function SMS_service(){
                             messages: [{to: `${phoneNumber}`}],
                         },
                     });
+
                     return res.status(200).send('인증번호가 전송되었습니다. 인증번호 유효시간은 3분입니다.')
                 } else {
                     res.status(500).send('이미 등록되어있는 핸드폰번호입니다. 이미 가입하셨다면 아이디/비밀번호찾기를 이용해주세요.')

@@ -27,7 +27,15 @@ app.use(function(_req, res, next) {
     next();
 });
 
-
+app.post('/changePw',cors(corsOptions),(req,res)=>{
+    UserService().changeFindPw(req,res)
+})
+app.post('/findId',cors(corsOptions),(req,res)=>{
+    UserService().findId(req,res)
+})
+app.post('/findPw',cors(corsOptions),(req,res)=>{
+    UserService().findPw(req,res)
+})
 
 app.post('/register', cors(corsOptions), (req,res)=>{
     UserService().register(req,res)

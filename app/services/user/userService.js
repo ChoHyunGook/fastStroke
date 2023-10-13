@@ -2,6 +2,7 @@ import db from '../../DataBase/index.js'
 import applyDotenv from "../../Lambdas/applyDotenv.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 dotenv.config()
 
 export default function UserService(){
@@ -107,7 +108,6 @@ export default function UserService(){
                                   .send(user)
 
 
-
                           }catch (err){
                               res.status(400).send(err)
                           }
@@ -128,6 +128,56 @@ export default function UserService(){
             }
         },
 
+        findId(req,res){
+            try{
+                const data = req.body
+                const tokenData = req.cookies.authNumToken
+                const verify = jwt.verify(tokenData, authNum_jwt_secret)
+                if(data.authNum !== verify.authNum){
+                    res.status(400).send('인증번호가 불일치 합니다.')
+                }else{
+                    User.findOne({name:data.name,phone:data.phone})
+                        .then(findData=>{
+                            res.status(200).send(findData.userId)
+                        })
+                }
+            }catch (e) {
+                if(e.name === 'TokenExpiredError'){
+                    res.status(500).send('인증시간이 만료되었습니다.')
+                }
+            }
+
+
+        },
+
+        findPw(req,res){
+            try{
+                const data = req.body
+                const tokenData = req.cookies.authNumToken
+                const verify = jwt.verify(tokenData, authNum_jwt_secret)
+                if(data.authNum !== verify.authNum){
+                    res.status(400).send('인증번호가 불일치 합니다.')
+                }else{
+                    res.status(200).send('인증번호 일치')
+                }
+            }catch (e) {
+                if(e.name === 'TokenExpiredError'){
+                    res.status(500).send('인증시간이 만료되었습니다.')
+                }
+            }
+
+        },
+
+        changeFindPw(req,res){
+            const data = req.body
+            const userIdData = {userId:data.userId}
+            const bcryptPwData = bcrypt.hashSync(data.password, 10)
+            const insertPwData = {password: bcryptPwData}
+            User.findOneAndUpdate(userIdData,{$set:insertPwData},{upsert:true})
+                .then(user=>{
+                    res.status(200).clearCookie('authNumToken', '').send('비밀번호 변경완료')
+                })
+        }
 
 
 

@@ -27,6 +27,10 @@ app.use(function(_req, res, next) {
     next();
 });
 
+app.post('/findInfoSMS',cors(corsOptions),(req,res)=>{
+    SMS_service().findInfoSMS(req,res)
+})
+
 app.post('/modifyBirthSMS',cors(corsOptions),(req,res)=>{
     SMS_service().modifyBirthSMS(req,res)
 })
