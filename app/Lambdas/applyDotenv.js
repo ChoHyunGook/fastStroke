@@ -20,7 +20,11 @@ const applyDotenv = dotenv => {
         AUTH_INFO_SECRET:process.env.AUTH_INFO_SECRET,
         AUTH_LOGIN_SECRET:process.env.AUTH_LOGIN_SECRET,
         AUTHID:process.env.AUTHID,
-        AUTHPW:process.env.AUTHPW
+        AUTHPW:process.env.AUTHPW,
+        AWS_SECRET:process.env.AWS_SECRET,
+        AWS_ACCESS:process.env.AWS_ACCESS,
+        AWS_REGION:process.env.AWS_REGION,
+        AWS_BUCKET_NAME:process.env.AWS_BUCKET_NAME,
     }
 }
 

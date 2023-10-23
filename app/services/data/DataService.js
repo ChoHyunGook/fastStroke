@@ -3,16 +3,45 @@ import applyDotenv from "../../Lambdas/applyDotenv.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import moment from "moment-timezone";
+import AWS from 'aws-sdk'
 dotenv.config()
 
 
 export default function DataService(){
 
-    const {access_jwt_secret} = applyDotenv(dotenv)
+    const {access_jwt_secret, AWS_SECRET, AWS_ACCESS, AWS_REGION, AWS_BUCKET_NAME,} = applyDotenv(dotenv)
 
     const Stroke = db.Stroke
 
+    const ClientId = AWS_SECRET
+    const ClientSecret = AWS_ACCESS
+    const Bucket_name = AWS_BUCKET_NAME
+
+    const s3 = new AWS.S3({
+        accessKeyId: ClientId,
+        secretAccessKey: ClientSecret,
+        region: AWS_REGION
+    });
+
     return{
+        async recordFileUpload(req, res) {
+            const file = req.file
+            const info = JSON.parse(req.body.user)
+            const params = {
+                Bucket:Bucket_name,
+                Key:`record/${info.userId}/${file.originalname.trim()}`,
+                Body:file.buffer
+            }
+            s3.upload(params,function (err,data){
+                if(err){
+                    res.status(400).send(err)
+                }else{
+                    res.status(200).send('Save Success')
+                }
+            })
+        },
+
+
         getData(req,res){
             try {
                 const tokenData = req.cookies.accessToken

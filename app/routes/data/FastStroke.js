@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors"
 import dotenv from "dotenv"
 import DataService from "../../services/data/DataService.js";
+import multer from "multer"
+var storage = multer.memoryStorage()
+var upload = multer({storage: storage});
 dotenv.config()
 
 
@@ -36,6 +39,9 @@ app.get('/weekcore',cors(corsOptions),(req,res)=>{
 
 app.get('/monthCore',cors(corsOptions),(req,res)=>{
     DataService().monthCore(req,res)
+})
+app.post('/recordFiles', upload.single('file'),cors(corsOptions),(req,res)=>{
+    DataService().recordFileUpload(req,res)
 })
 
 
