@@ -46,7 +46,6 @@ export default function SMS_service(){
     return {
         findInfoSMS(req,res){
             const data =req.body
-            console.log(data.name)
             if(data.name !== undefined){
                 User.findOne({name:data.name,phone:data.phone})
                     .then(user=>{

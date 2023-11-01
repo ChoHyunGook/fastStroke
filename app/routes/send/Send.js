@@ -54,6 +54,9 @@ app.post('/modifyPhoneSMS',cors(corsOptions),(req,res)=>{
 app.post('/modifyUserIdEmail',cors(corsOptions),(req,res)=>{
     EmailService().modifyUserIdEmail(req,res)
 })
+app.post('/customer/service',cors(corsOptions),(req,res)=>{
+    EmailService().customerService(req,res)
+})
 
 
 export default app
