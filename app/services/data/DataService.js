@@ -181,19 +181,12 @@ export default function DataService(){
 
                 let now = moment().tz('Asia/Seoul').format('YYYY-MM-DD')
 
-                let thTime = moment(now).subtract("1","M").format('YYYY-MM-DD')
-
+                let thTime = moment(now).subtract("30","d").format('YYYY-MM-DD')
 
                 Stroke.find({userId:verify.userId}).sort({'date':1})
                     .then(user=>{
                         const start = thTime.split('-')
                         const end = now.split('-')
-                        if (Number(start[2]) <= 9) {
-                            start[2] = '0' + start[2]
-                        }
-                        if (Number(end[2]) <= 9) {
-                            end[2] = '0' + end[2]
-                        }
 
                         let pushData = []
                         user.map(items=>{
