@@ -92,7 +92,7 @@ export default function UserService(){
                       }else{
                           try{
                               let time = moment().tz('Asia/Seoul')
-                              let day = time.format('YYYY-MM-DD hh:mm:ss')
+                              let day = time.format('YYYY-MM-DD kk:mm:ss')
                               let ex = moment(day).add(1,'hours').format('YYYY-MM-DD kk:mm:ss')
 
                               const accessToken = jwt.sign({
