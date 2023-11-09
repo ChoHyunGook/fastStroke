@@ -3,6 +3,7 @@ import applyDotenv from "../../Lambdas/applyDotenv.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import moment from "moment-timezone";
 dotenv.config()
 
 export default function UserService(){
@@ -90,22 +91,36 @@ export default function UserService(){
                           res.status(400).send('비밀번호를 다시 한번 확인해주세요.')
                       }else{
                           try{
+                              let time = moment().tz('Asia/Seoul')
+                              let day = time.format('YYYY-MM-DD hh:mm:ss')
+                              let ex = moment(day).add(1,'hours').format('YYYY-MM-DD kk:mm:ss')
+
                               const accessToken = jwt.sign({
                                   userId:user.userId,
                                   birth:user.birth,
                                   name:user.name,
                                   phone:user.phone,
                                   admin:user.admin,
-                                  startUp:user.start_up
+                                  startUp:user.start_up,
+                                  expiresDate:ex
                               },access_jwt_secret,{expiresIn:'1h'})
 
                               res.cookie('accessToken',accessToken,{
                                   secure: false,
                                   httpOnly: true
                               })
+                              let sendData = {
+                                  userId:user.userId,
+                                  birth:user.birth,
+                                  name:user.name,
+                                  phone:user.phone,
+                                  admin:user.admin,
+                                  startUp:user.start_up,
+                                  expiresDate:ex
+                              }
 
                               res.status(200).clearCookie('termsToken')
-                                  .send(user)
+                                  .send(sendData)
 
 
                           }catch (err){
