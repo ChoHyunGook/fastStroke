@@ -354,6 +354,7 @@ export default function AdminService(){
                     let sendData = {
                         '아이디':names.id,
                         '성함':names.name,
+                        '생년월일':names.birth,
                         '핸드폰번호':names.phone,
                         '관리자':names.admin,
                         '개통여부':names.start_up
@@ -378,6 +379,7 @@ export default function AdminService(){
                     let sendData = {
                         name:names['성함'],
                         userId:names['아이디'],
+                        birth:names['생년월일'],
                         password: bcrypt.hashSync(names['비밀번호'], 10),
                         phone:names['핸드폰번호'],
                         admin:(names['관리자'] === 'O') ? true:false,
