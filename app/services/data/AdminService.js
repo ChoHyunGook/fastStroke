@@ -83,6 +83,7 @@ export default function AdminService(){
                             let updateData = {
                                 userId: data.userId,
                                 name: data.name,
+                                birth: data.birth,
                                 admin: (data.admin === 'O') ? true : false,
                                 phone: data.phone
                             }
@@ -99,12 +100,12 @@ export default function AdminService(){
                         } else {
                             const pwData = data.password
                             const bcryptPwData = bcrypt.hashSync(pwData, 10)
-                            const insertPwData = {password: bcryptPwData}
 
                             let updateData = {
                                 userId: data.userId,
                                 name: data.name,
-                                password: insertPwData,
+                                birth: data.birth,
+                                password: bcryptPwData,
                                 admin: (data.admin === 'O') ? true : false,
                                 phone: data.phone
                             }
@@ -112,6 +113,7 @@ export default function AdminService(){
                             User.findOneAndUpdate({userId: data.userId}, {$set: updateData}
                                 , function (err, users) {
                                     if (err) {
+                                        console.log(err)
                                         res.status(400).send(err)
                                     } else {
                                         res.status(200).send('Update Success')
